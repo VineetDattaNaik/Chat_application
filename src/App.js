@@ -147,6 +147,8 @@ function App() {
       }
     });
 
+    
+
     // Cleanup subscription
     return () => {
       console.log('Cleaning up auth subscription'); // Debug log
@@ -228,6 +230,11 @@ function App() {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#f0f2f5',
+      '@media (max-width: 480px)': {
+        padding: '8px',
+        height: '100vh', // Full height on mobile
+        margin: 0, // Remove margin on mobile
+      },
     },
     
     header: {
@@ -236,6 +243,10 @@ function App() {
       padding: '25px 30px',
       borderRadius: '20px 20px 0 0',
       boxShadow: '0 4px 20px rgba(76, 175, 80, 0.1)',
+      '@media (max-width: 480px)': {
+        padding: '12px',
+        borderRadius: '10px 10px 0 0',
+      },
     },
     
     userInfo: {
@@ -243,6 +254,10 @@ function App() {
       justifyContent: 'space-between',
       alignItems: 'center',
       marginTop: '10px',
+      '@media (max-width: 480px)': {
+        flexDirection: 'column',
+        gap: '10px',
+      },
     },
     
     chatContainer: {
@@ -257,36 +272,55 @@ function App() {
       flexDirection: 'column',
       gap: '15px',
       scrollBehavior: 'smooth',
+      '@media (max-width: 480px)': {
+        padding: '10px',
+        marginBottom: '10px',
+        borderRadius: '0 0 10px 10px',
+        gap: '8px',
+        height: 'calc(100vh - 140px)', // Adjust based on header and message form height
+      },
     },
     
     messageForm: {
       display: 'flex',
       gap: '15px',
-      padding: '25px',
+      padding: '20px',
       backgroundColor: 'white',
       borderRadius: '20px',
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-      position: 'relative',
+      position: 'sticky',
+      bottom: 0,
+      '@media (max-width: 480px)': {
+        padding: '8px',
+        gap: '8px',
+        borderRadius: '10px',
+        position: 'fixed',
+        bottom: '8px',
+        left: '8px',
+        right: '8px',  // Removed extra quote
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      },
     },
     
     input: {
       flex: 1,
-      padding: '15px 20px',
+      padding: '12px 15px',
       borderRadius: '15px',
       border: '2px solid #e8eaed',
       fontSize: '16px',
       transition: 'all 0.3s ease',
       backgroundColor: '#f8f9fa',
       outline: 'none',
-      '&:focus': {
-        borderColor: '#4CAF50',
-        backgroundColor: 'white',
-        boxShadow: '0 0 0 4px rgba(76, 175, 80, 0.1)',
+      '@media (max-width: 480px)': {
+        padding: '8px 12px',
+        fontSize: '14px',
+        borderRadius: '20px',
+        border: '1.5px solid #e8eaed',
       },
     },
     
     button: {
-      padding: '15px 30px',
+      padding: '12px 24px',
       backgroundColor: '#4CAF50',
       color: 'white',
       border: 'none',
@@ -295,26 +329,31 @@ function App() {
       fontSize: '16px',
       fontWeight: '600',
       transition: 'all 0.3s ease',
-      '&:hover': {
-        backgroundColor: '#45a049',
-        transform: 'translateY(-2px)',
-        boxShadow: '0 4px 12px rgba(76, 175, 80, 0.2)',
-      },
-      '&:active': {
-        transform: 'translateY(0)',
+      minWidth: '80px',
+      '@media (max-width: 480px)': {
+        padding: '8px 16px',
+        fontSize: '14px',
+        minWidth: '60px',
+        borderRadius: '20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       },
     },
     
     message: {
-      padding: '15px 20px',
+      padding: '12px 16px',
       borderRadius: '18px',
       maxWidth: '70%',
       width: 'fit-content',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        transform: 'translateY(-1px)',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
+      marginBottom: '8px',
+      '@media (max-width: 480px)': {
+        padding: '8px 12px',
+        maxWidth: '85%',
+        marginBottom: '4px',
+        fontSize: '14px',
+        borderRadius: '16px',
       },
     },
     
@@ -323,6 +362,9 @@ function App() {
       color: 'white',
       alignSelf: 'flex-end',
       borderBottomRightRadius: '5px',
+      '@media (max-width: 480px)': {
+        borderBottomRightRadius: '4px',
+      },
     },
     
     otherMessage: {
@@ -330,6 +372,9 @@ function App() {
       color: '#1F2937',
       alignSelf: 'flex-start',
       borderBottomLeftRadius: '5px',
+      '@media (max-width: 480px)': {
+        borderBottomLeftRadius: '4px',
+      },
     },
     
     systemMessage: {
@@ -343,6 +388,16 @@ function App() {
       borderRadius: '30px',
       alignSelf: 'center',
       maxWidth: '80%',
+      '@media (max-width: 768px)': {
+        fontSize: '13px',
+        padding: '8px 15px',
+        maxWidth: '90%',
+      },
+      '@media (max-width: 480px)': {
+        fontSize: '12px',
+        padding: '6px 12px',
+        maxWidth: '95%',
+      },
     },
     
     messageHeader: {
@@ -351,17 +406,28 @@ function App() {
       alignItems: 'center',
       marginBottom: '6px',
       fontSize: '14px',
+      '@media (max-width: 480px)': {
+        fontSize: '12px',
+        marginBottom: '4px',
+      },
     },
     
     username: {
       fontWeight: '600',
       fontSize: '15px',
+      '@media (max-width: 480px)': {
+        fontSize: '13px',
+      },
     },
     
     messageTime: {
       fontSize: '12px',
       marginLeft: '10px',
       opacity: 0.8,
+      '@media (max-width: 480px)': {
+        fontSize: '11px',
+        marginLeft: '6px',
+      },
     },
     
     myMessageTime: {
@@ -373,9 +439,13 @@ function App() {
     },
     
     messageText: {
-      lineHeight: '1.5',
+      lineHeight: '1.4',
       wordBreak: 'break-word',
       fontSize: '15px',
+      '@media (max-width: 480px)': {
+        fontSize: '14px',
+        lineHeight: '1.3',
+      },
     },
     
     joinForm: {
@@ -386,6 +456,15 @@ function App() {
       borderRadius: '24px',
       boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
       animation: 'slideUp 0.5s ease',
+      '@media (max-width: 768px)': {
+        maxWidth: '90%',
+        margin: '40px auto',
+        padding: '30px',
+      },
+      '@media (max-width: 480px)': {
+        margin: '20px auto',
+        padding: '20px',
+      },
     },
     
     joinHeader: {
@@ -394,6 +473,14 @@ function App() {
       color: '#1F2937',
       fontSize: '28px',
       fontWeight: '700',
+      '@media (max-width: 768px)': {
+        fontSize: '24px',
+        marginBottom: '20px',
+      },
+      '@media (max-width: 480px)': {
+        fontSize: '20px',
+        marginBottom: '15px',
+      },
     },
     
     signOutButton: {
@@ -406,6 +493,10 @@ function App() {
       fontSize: '14px',
       fontWeight: '600',
       transition: 'all 0.3s ease',
+      '@media (max-width: 480px)': {
+        width: '100%',
+        padding: '8px 15px',
+      },
       '&:hover': {
         backgroundColor: '#dc2626',
         transform: 'translateY(-2px)',
@@ -420,11 +511,15 @@ function App() {
       display: 'flex',
       gap: '10px',
       alignItems: 'center',
+      '@media (max-width: 480px)': {
+        width: '100%',
+        justifyContent: 'center',
+      },
     },
 
     clearButton: {
       padding: '10px 20px',
-      backgroundColor: '#f59e0b',  // amber color
+      backgroundColor: '#f59e0b',
       color: 'white',
       border: 'none',
       borderRadius: '12px',
@@ -432,6 +527,10 @@ function App() {
       fontSize: '14px',
       fontWeight: '600',
       transition: 'all 0.3s ease',
+      '@media (max-width: 480px)': {
+        width: '100%',
+        padding: '8px 15px',
+      },
       '&:hover': {
         backgroundColor: '#d97706',
         transform: 'translateY(-2px)',
