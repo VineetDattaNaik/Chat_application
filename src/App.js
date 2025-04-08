@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 import Auth from './components/Auth';
-import socket from './socket';
+import socket, { disconnectSocket } from './socket';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -27,7 +27,12 @@ function App() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      if (subscription) subscription.unsubscribe();
+      if (socket.connected) {
+        socket.disconnect();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -92,14 +97,76 @@ function App() {
   };
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error);
-    } else {
+    try {
+      // First disconnect socket
+      disconnectSocket();
+      
+      // Clear all states first
       setIsJoined(false);
       setChat([]);
+      setUsername('');
+      setMessage('');
+      setSession(null);
+
+      // Then sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error signing out:', error);
+        return;
+      }
+
+      // Force a page reload to clear all states and reconnection attempts
+      window.location.replace('/');
+      
+    } catch (err) {
+      console.error('Error during sign out:', err);
     }
   };
+
+  // Separate useEffect for auth state changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event, 'Session:', session); // Debug log
+      
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        console.log('Handling sign out...'); // Debug log
+        
+        // Disconnect socket
+        disconnectSocket();
+        
+        // Clear all states
+        setIsJoined(false);
+        setChat([]);
+        setUsername('');
+        setMessage('');
+        setSession(null);
+        
+        // Force reload
+        window.location.replace('/');
+      }
+    });
+
+    // Cleanup subscription
+    return () => {
+      console.log('Cleaning up auth subscription'); // Debug log
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  // Add session initialization effect
+  useEffect(() => {
+    const initSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session:', error);
+        return;
+      }
+      setSession(session);
+    };
+
+    initSession();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -420,8 +487,25 @@ function App() {
         <div style={styles.userInfo}>
           <p>Welcome, {username}!</p>
           <div style={styles.buttonGroup}>
-            <button onClick={clearChat} style={styles.clearButton}>Clear Chat</button>
-            <button onClick={handleSignOut} style={styles.signOutButton}>Sign Out</button>
+            <button 
+              onClick={clearChat} 
+              style={{
+                ...styles.button,
+                backgroundColor: '#6c757d'
+              }}
+            >
+              Clear Chat
+            </button>
+            <button 
+              onClick={handleSignOut} 
+              style={{
+                ...styles.button,
+                backgroundColor: '#dc3545',
+                marginLeft: '10px'
+              }}
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </div>

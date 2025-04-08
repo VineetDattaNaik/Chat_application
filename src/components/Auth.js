@@ -22,9 +22,16 @@ function Auth() {
           .eq('email', email)
           .single();
 
+        if (checkError && checkError.code !== 'PGRST116') {
+          console.error('Error checking existing user:', checkError);
+          setErrorMessage('Error checking user existence');
+          setLoading(false);
+          return;
+        }
+
         if (existingUser) {
           setErrorMessage('User already exists! Please use a different email.');
-          setEmail(''); // Clear the email field
+          setEmail('');
           setLoading(false);
           return;
         }
@@ -33,13 +40,22 @@ function Auth() {
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              username: email.split('@')[0]
+            }
+          }
         });
 
+        console.log('Signup response:', { authData, signUpError }); // Debug log
+
         if (signUpError) {
+          console.error('Signup error:', signUpError);
           setErrorMessage(signUpError.message);
         } else {
           // Add user to user_chat table
-          const username = email.split('@')[0]; // Create username from email
+          const username = email.split('@')[0];
           const { error: insertError } = await supabase
             .from('user_chat')
             .insert([
@@ -51,6 +67,7 @@ function Auth() {
             ]);
 
           if (insertError) {
+            console.error('Error creating user profile:', insertError);
             setErrorMessage('Error creating user profile');
           } else {
             alert('Check your email for the confirmation link!');
@@ -62,10 +79,12 @@ function Auth() {
           password,
         });
         if (error) {
+          console.error('Login error:', error);
           setErrorMessage(error.message);
         }
       }
     } catch (error) {
+      console.error('Authentication error:', error);
       setErrorMessage(error.message);
     } finally {
       setLoading(false);
@@ -156,6 +175,7 @@ function Auth() {
 }
 
 export default Auth;
+
 
 
 
